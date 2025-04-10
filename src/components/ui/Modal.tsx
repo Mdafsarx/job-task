@@ -77,7 +77,7 @@ export const ModalBody = ({
     }
   }, [open]);
 
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const { setOpen } = useModal();
   useOutsideClick(modalRef, () => setOpen(false));
 
@@ -96,14 +96,14 @@ export const ModalBody = ({
             opacity: 0,
             backdropFilter: "blur(0px)",
           }}
-          className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50"
+          className="fixed [perspective:800px] [transform-style:preserve-3d] inset-0 h-full w-full  flex items-center justify-center z-50 p-10"
         >
           <Overlay />
 
           <motion.div
             ref={modalRef}
             className={cn(
-              "min-h-[50%] max-h-[90%] md:max-w-[40%] bg-white border border-[var(--primary-color)]  md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
+              "min-h-[30%] max-h-[90%] md:max-w-[40%] bg-white border border-[var(--primary-color)]  md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
               className
             )}
             initial={{
@@ -130,44 +130,11 @@ export const ModalBody = ({
             }}
           >
             <CloseIcon />
-            {children}
+            <div className="pt-10 pb-6 px-10">{children}</div >
           </motion.div>
         </motion.div>
       )}
     </AnimatePresence>
-  );
-};
-
-export const ModalContent = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div className={cn("flex flex-col flex-1 p-8 md:p-10", className)}>
-      {children}
-    </div>
-  );
-};
-
-export const ModalFooter = ({
-  children,
-  className,
-}: {
-  children: ReactNode;
-  className?: string;
-}) => {
-  return (
-    <div
-      className={cn(
-        "flex justify-end p-4 bg-gray-100 dark:bg-neutral-900",
-        className
-      )}
-    >
-      {children}
-    </div>
   );
 };
 
@@ -220,7 +187,7 @@ const CloseIcon = () => {
 // Hook to detect clicks outside of a component.
 // Add it in a separate file, I've added here for simplicity
 export const useOutsideClick = (
-  ref: React.RefObject<HTMLDivElement>,
+  ref: React.RefObject<HTMLDivElement | null>,
   callback: Function
 ) => {
   useEffect(() => {
