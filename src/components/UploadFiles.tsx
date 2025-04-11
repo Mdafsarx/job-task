@@ -1,56 +1,75 @@
 "use client";
 import React, { useState } from "react";
 import type { UploadProps } from "antd";
-import { Upload, message } from "antd";
+import { Upload } from "antd";
 import { RiImageAddFill } from "react-icons/ri";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { Button } from "@mui/material";
-
+import toast from "react-hot-toast";
+import { useModal } from "@/context/ModalContext";
 const { Dragger } = Upload;
 
-const CLOUDINARY_UPLOAD_PRESET = "your_unsigned_preset";
-const CLOUDINARY_CLOUD_NAME = "your_cloud_name";
-
 const UploadFiles: React.FC = () => {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-
-  const props: UploadProps = {
-    name: "file",
-    multiple: true,
-    beforeUpload(file) {
-      setImageUrls((prev) => [...prev, URL.createObjectURL(file)]);
-      return false; // Prevent default upload
-    },
-  };
+  const [images, setImages] = useState<{ title: string; url: string }[]>([]);
+  const { setOpen, setRefresh, refresh } = useModal();
 
   const uploadToCloudinary = async (file: File) => {
+    console.log(file);
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "Image_gallery"
+    );
+    formData.append(
+      "cloud_name",
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dbrceqag4"
+    );
 
     try {
-      const response = await (
-        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+      const response = await fetch(
+        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
         {
           method: "POST",
           body: formData,
         }
       );
-
       const data = await response.json();
-      return data.secure_url;
-    } catch (error) {
-      console.error("Upload failed:", error);
-      message.error("Upload failed, please try again.");
-      return null;
-    }
+      console.log(data);
+      setImages((prev) => [
+        ...prev,
+        { title: data.original_filename, url: data.secure_url },
+      ]);
+    } catch (error) {}
   };
 
-  console.log('imageUrls', imageUrls);
+  const props: UploadProps = {
+    name: "file",
+    multiple: true,
+    beforeUpload(file) {
+      uploadToCloudinary(file);
+    },
+  };
+
+  const handleSubmit = () => {
+    if (!images.length) return toast.error("Please upload at least one image");
+    const existingImages = JSON.parse(
+      localStorage.getItem("uploadedImages") || "[]"
+    );
+    localStorage.setItem(
+      "uploadedImages",
+      JSON.stringify([...existingImages, ...images])
+    );
+    setRefresh(!refresh);
+    toast.success("Images uploaded successfully");
+    setOpen(false);
+    setImages([]);
+  };
 
   return (
-    <div>
+    <React.Fragment>
       <Dragger
+        showUploadList={false}
         style={{
           border: "2px dashed #80EEB4",
           fontFamily: "var(--font-nunito)",
@@ -79,6 +98,7 @@ const UploadFiles: React.FC = () => {
 
       <div className="mt-7 flex justify-end">
         <Button
+          onClick={handleSubmit}
           sx={{
             backgroundColor: "var(--primary-color)",
             color: "white",
@@ -92,7 +112,7 @@ const UploadFiles: React.FC = () => {
           Submit
         </Button>
       </div>
-    </div>
+    </React.Fragment>
   );
 };
 

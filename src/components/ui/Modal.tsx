@@ -1,4 +1,5 @@
 "use client";
+import { useModal } from "@/context/ModalContext";
 import { cn } from "@/utils/cn";
 import { AnimatePresence, motion } from "motion/react";
 import React, {
@@ -25,14 +26,6 @@ export const ModalProvider = ({ children }: { children: ReactNode }) => {
       {children}
     </ModalContext.Provider>
   );
-};
-
-export const useModal = () => {
-  const context = useContext(ModalContext);
-  if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
-  }
-  return context;
 };
 
 export function Modal({ children }: { children: ReactNode }) {
@@ -67,7 +60,7 @@ export const ModalBody = ({
   children: ReactNode;
   className?: string;
 }) => {
-  const { open } = useModal();
+  const { open, setOpen } = useModal();
 
   useEffect(() => {
     if (open) {
@@ -78,7 +71,6 @@ export const ModalBody = ({
   }, [open]);
 
   const modalRef = useRef<HTMLDivElement>(null);
-  const { setOpen } = useModal();
   useOutsideClick(modalRef, () => setOpen(false));
 
   return (
@@ -184,8 +176,6 @@ const CloseIcon = () => {
   );
 };
 
-// Hook to detect clicks outside of a component.
-// Add it in a separate file, I've added here for simplicity
 export const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
   callback: Function

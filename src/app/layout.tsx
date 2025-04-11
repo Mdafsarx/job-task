@@ -4,6 +4,8 @@ import "./globals.css";
 import Navbar from "@/layout/Navbar";
 import { Container } from "@mui/material";
 import Footer from "@/layout/Footer";
+import { Toaster } from "react-hot-toast";
+import { ModalProvider } from "@/context/ModalContext";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -28,11 +30,14 @@ export default function RootLayout({
       <body
         className={`${nunito.variable} bg-[var(--background-color)] flex flex-col min-h-screen`}
       >
-        <Navbar />
-        <Container maxWidth="lg" sx={{ padding: "60px 0px 60px 0px" }}>
-          {children}
-        </Container>
-        <Footer />
+        <ModalProvider>
+          <Toaster />
+          <Navbar />
+          <Container maxWidth="lg" sx={{ padding: "60px 0px 60px 0px" }}>
+            {children}
+          </Container>
+          <Footer />
+        </ModalProvider>
       </body>
     </html>
   );

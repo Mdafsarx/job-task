@@ -3,13 +3,11 @@ import { FC, useState } from "react";
 import { AiFillDelete } from "react-icons/ai";
 
 interface ImageCardProps {
-  image: {
-    src: string;
-    alt: string;
-  };
+  url: string;
+  title: string;
 }
 
-const ImageCard: FC<ImageCardProps> = ({ image }) => {
+const ImageCard: FC<ImageCardProps> = ({ url, title }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -18,11 +16,7 @@ const ImageCard: FC<ImageCardProps> = ({ image }) => {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <img
-        className="h-auto max-w-full rounded-lg"
-        src={image.src}
-        alt={image.alt}
-      />
+      <img className="h-auto max-w-full rounded-lg" src={url} alt={title} />
       {isHovered && (
         <div className="absolute inset-0 bg-black/40 rounded-lg">
           <div className="absolute top-0 right-0 p-2 rounded-lg text-white cursor-pointer">
