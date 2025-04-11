@@ -6,6 +6,7 @@ import ModalTriggerButton from "@/components/ui/ModalTriggerButton";
 import UploadFiles from "@/components/UploadFiles";
 import { useEffect, useState } from "react";
 import { useModal } from "@/context/ModalContext";
+import { CiImageOn } from "react-icons/ci";
 
 const GallerySection = () => {
   const { refresh } = useModal();
@@ -29,14 +30,18 @@ const GallerySection = () => {
       <div className="flex items-center justify-between">
         <VanishInput placeholders={placeholders} />
         <Modal>
-          <ModalTriggerButton />
+          <ModalTriggerButton
+            title="Upload"
+            icon={<CiImageOn />}
+            className="bg-white border border-[var(--primary-color)] text-[var(--primary-color)]"
+          />
           <ModalBody>
             <UploadFiles />
           </ModalBody>
         </Modal>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 gap-y-8">
         {images.map((image, index) => (
           <ImageCard key={index} url={image?.url} title={image.title} />
         ))}
