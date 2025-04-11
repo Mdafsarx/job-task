@@ -1,8 +1,8 @@
 import { Modal, ModalBody } from "@/components/ui/Modal";
 import { VanishInput } from "@/components/ui/VanishInput";
 import ImageCard from "@/components/ImageCard";
-import UploadFiles from "@/components/UploadFiles";
 import ModalTriggerButton from "@/components/ui/ModalTriggerButton";
+import UploadFiles from "@/components/UploadFiles";
 
 const GallerySection = () => {
   const placeholders = [
