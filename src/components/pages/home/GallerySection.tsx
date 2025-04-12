@@ -18,6 +18,7 @@ const GallerySection = () => {
     "What's the first rule of Fight Club?",
     "Who is Tyler Durden?",
   ];
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [ImagesShow, setImagesShow] = useState<number>(1);
   const imagesPerPage = 8;
@@ -26,8 +27,18 @@ const GallerySection = () => {
   const [displayedData, setDisplayedData] = useState<
     { url: string; title: string }[]
   >([]);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSearchTerm("");
+  };
 
-  const totalPages = images ? Math.ceil(images.length / imagesPerPage) : 0;
+  const totalPages = Math.ceil(
+    images.filter((img) => img.title.toLowerCase().includes(searchTerm))
+      .length / imagesPerPage
+  );
 
   useEffect(() => {
     setLoading(true);
@@ -42,14 +53,21 @@ const GallerySection = () => {
     setLoading(true);
     const startIndex = (ImagesShow - 1) * imagesPerPage;
     const endIndex = ImagesShow * imagesPerPage;
-    setDisplayedData(images.slice(startIndex, endIndex));
+    const filteredImages = images.filter((img) =>
+      img.title.toLowerCase().includes(searchTerm)
+    );
+    setDisplayedData(filteredImages.slice(startIndex, endIndex));
     setLoading(false);
-  }, [images, ImagesShow]);
+  }, [images, ImagesShow, searchTerm]);
 
   return (
     <section className="space-y-10">
       <div className="flex items-center justify-between">
-        <VanishInput placeholders={placeholders} />
+        <VanishInput
+          placeholders={placeholders}
+          onChange={handleChange}
+          onSubmit={onSubmit}
+        />
         <Modal>
           <ModalTriggerButton
             title="Upload"
