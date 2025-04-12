@@ -15,9 +15,12 @@ import dynamic from "next/dynamic";
 
 const GallerySection = () => {
   const placeholders = [
-    "What's the first rule of Fight Club?",
-    "Who is Tyler Durden?",
+    "Upload your favorite image here",
+    "Search your image gallery now",
+    "Preview before uploading your image",
+    "Drag and drop image file",
   ];
+  
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [ImagesShow, setImagesShow] = useState<number>(1);
