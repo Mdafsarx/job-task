@@ -15,10 +15,10 @@ import dynamic from "next/dynamic";
 
 const GallerySection = () => {
   const placeholders = [
-    "Upload your favorite image here",
-    "Search your image gallery now",
-    "Preview before uploading your image",
-    "Drag and drop image file",
+    "Upload your image here",
+    "Search your image gallery",
+    "Preview image before upload",
+    "Drag and drop image",
   ];
   
   const [searchTerm, setSearchTerm] = useState<string>("");
