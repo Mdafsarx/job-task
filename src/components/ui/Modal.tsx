@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import React, {
   ReactNode,
   createContext,
-  useContext,
   useEffect,
   useRef,
   useState,
@@ -95,7 +94,7 @@ export const ModalBody = ({
           <motion.div
             ref={modalRef}
             className={cn(
-              "min-h-[30%] max-h-[90%] md:max-w-[40%] bg-white border border-[var(--primary-color)]  md:rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
+              "min-h-[30%] max-h-[90%] md:max-w-[40%] bg-white border border-[var(--primary-color)] rounded-2xl relative z-50 flex flex-col flex-1 overflow-hidden",
               className
             )}
             initial={{
@@ -122,7 +121,7 @@ export const ModalBody = ({
             }}
           >
             <CloseIcon />
-            <div className="pt-10 pb-6 px-10">{children}</div >
+            <div className="pt-10 pb-6 px-10">{children}</div>
           </motion.div>
         </motion.div>
       )}
@@ -178,12 +177,11 @@ const CloseIcon = () => {
 
 export const useOutsideClick = (
   ref: React.RefObject<HTMLDivElement | null>,
-  callback: Function
+  callback: (event: MouseEvent | TouchEvent) => void
 ) => {
   useEffect(() => {
-    const listener = (event: any) => {
-      // DO NOTHING if the element being clicked is the target element or their children
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || !(event.target instanceof Node) || ref.current.contains(event.target)) {
         return;
       }
       callback(event);

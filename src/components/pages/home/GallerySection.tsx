@@ -8,13 +8,18 @@ import UploadFiles from "@/components/UploadFiles";
 import { useModal } from "@/context/ModalContext";
 import { CiImageOn } from "react-icons/ci";
 import { GrFormNext, GrFormPrevious } from "react-icons/gr";
+import { MagnifyingGlass } from "react-loader-spinner";
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
+import lottieAnimation from "@/assets/AnimationEmpty.json";
+import dynamic from "next/dynamic";
 
 const GallerySection = () => {
   const placeholders = [
     "What's the first rule of Fight Club?",
     "Who is Tyler Durden?",
   ];
-  const [ImagesShow, setImagesShow] = useState(1);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [ImagesShow, setImagesShow] = useState<number>(1);
   const imagesPerPage = 8;
   const { refresh } = useModal();
   const [images, setImages] = useState<{ url: string; title: string }[]>([]);
@@ -25,16 +30,20 @@ const GallerySection = () => {
   const totalPages = images ? Math.ceil(images.length / imagesPerPage) : 0;
 
   useEffect(() => {
+    setLoading(true);
     const savedImages = JSON.parse(
       localStorage.getItem("uploadedImages") || "[]"
     );
     setImages(savedImages);
+    setLoading(false);
   }, [refresh]);
 
   useEffect(() => {
+    setLoading(true);
     const startIndex = (ImagesShow - 1) * imagesPerPage;
     const endIndex = ImagesShow * imagesPerPage;
     setDisplayedData(images.slice(startIndex, endIndex));
+    setLoading(false);
   }, [images, ImagesShow]);
 
   return (
@@ -53,11 +62,39 @@ const GallerySection = () => {
         </Modal>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 gap-y-8">
-        {displayedData.map((image, index) => (
-          <ImageCard key={index} url={image?.url} title={image.title} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center items-center min-h-[50vh]">
+          <MagnifyingGlass
+            visible={true}
+            height="80"
+            width="80"
+            ariaLabel="magnifying-glass-loading"
+            wrapperStyle={{}}
+            wrapperClass="magnifying-glass-wrapper"
+            glassColor="#c0efff"
+            color="#16A34A"
+          />
+        </div>
+      ) : displayedData.length === 0 ? (
+        <div className="flex flex-col items-center">
+          <Lottie
+            animationData={lottieAnimation}
+            loop
+            className="w-full h-72"
+            autoplay
+          />
+          <div className="text-center -mt-5">
+            <h2 className="text-xl font-bold pb-1">No images found</h2>
+            <p>Try uploading some images to get started.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 gap-y-8">
+          {displayedData.map((image, index) => (
+            <ImageCard key={index} url={image?.url} title={image.title} />
+          ))}
+        </div>
+      )}
 
       {/* pagination */}
       <div className="flex justify-center mt-4 xl:mt-0 gap-4">

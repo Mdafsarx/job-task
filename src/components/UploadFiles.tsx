@@ -26,21 +26,18 @@ const UploadFiles: React.FC = () => {
       process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || "dbrceqag4"
     );
 
-    try {
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
-      const data = await response.json();
-      console.log(data);
-      setImages((prev) => [
-        ...prev,
-        { title: data.original_filename, url: data.secure_url },
-      ]);
-    } catch (error) {}
+    const response = await fetch(
+      `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const data = await response.json();
+    setImages((prev) => [
+      ...prev,
+      { title: data.original_filename, url: data.secure_url },
+    ]);
   };
 
   const props: UploadProps = {

@@ -1,6 +1,5 @@
 import React from "react";
 import { ModalTrigger } from "./Modal";
-import { CiImageOn } from "react-icons/ci";
 import { cn } from "@/utils/cn";
 
 interface IProps {
