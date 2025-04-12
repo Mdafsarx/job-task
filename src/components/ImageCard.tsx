@@ -6,6 +6,7 @@ import { Modal, ModalBody } from "./ui/Modal";
 import { RiEyeFill } from "react-icons/ri";
 import Image from "next/image";
 import Swal from "sweetalert2";
+import { useModal } from "@/context/ModalContext";
 
 interface ImageCardProps {
   url: string;
@@ -13,24 +14,35 @@ interface ImageCardProps {
 }
 
 const ImageCard: FC<ImageCardProps> = ({ url, title }) => {
+  const { setRefresh, refresh } = useModal();
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleDelete = () => {
+  const handleDelete = (url: string) => {
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
+      confirmButtonColor: "#16A34A",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
-        });
+        const stored = localStorage.getItem("uploadedImages");
+        if (stored) {
+          const images = JSON.parse(stored);
+          const updatedImages = images.filter(
+            (img: { title: string; url: string }) => img.url !== url
+          );
+          localStorage.setItem("uploadedImages", JSON.stringify(updatedImages));
+          setRefresh(!refresh);
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+            confirmButtonColor: "#16A34A",
+          });
+        }
       }
     });
   };
@@ -52,7 +64,7 @@ const ImageCard: FC<ImageCardProps> = ({ url, title }) => {
       {isHovered && (
         <div className="absolute inset-0 bg-black/40 rounded-xl">
           <div className="absolute top-0 right-0 p-2 rounded-lg text-white cursor-pointer">
-            <AiFillDelete size={20} onClick={handleDelete} />
+            <AiFillDelete size={20} onClick={() => handleDelete(url)} />
           </div>
           <Modal>
             <div className="absolute size-fit top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2">
